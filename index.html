@@ -1,33 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Little Orchard — More apples ≠ more profit</title>
+
+  <link rel="stylesheet" href="styles.css">
+
 </head>
 <body>
-    <div class="info-knop-rood">i</div>
-    <div class="info-knop-groen">i</div>
-    <div class="info-knop-geel">i</div>
-    <div class="kruisje-knop">x</div>
-    <div class="euro">€</div>
-    <div class="truck-icon">🚚</div>
-    <div class="home-icon">🏠</div>
+  <main>
+    <div class="orchard-book-shell" aria-label="Open book with year pages">
+      <div class="orchard-fixed-paper" aria-hidden="true"></div>
+      <section class="horizontal-story" id="horizontalStory" aria-label="The Little Orchard timeline">
+        <div class="horizontal-track" id="horizontalTrack"></div>
+      </section>
+      <div class="orchard-book-cover" aria-hidden="true">
+        <span class="orchard-sheet-edge orchard-sheet-edge-top"></span>
+        <span class="orchard-sheet-edge orchard-sheet-edge-bottom"></span>
+      </div>
+      <div class="orchard-book-spine-fixed" aria-hidden="true"></div>
+    </div>
+  </main>
 
-    <div class="joly-red"></div>
-    <div class="golden"></div>
-    <div class="elstar"></div>
-    <div class="junami"></div>
-    <div class="kroet-moes"></div>
-    <div class="jonagored"></div>
-    <div class="zari"></div>
-    <div class="braeburn"></div>
-    <div class="jonasupra"></div>
-    <div class="delcorf"></div>
+  <section class="ranking-section" aria-label="Ranking and comparison">
+    <div class="ranking-inner">
+      <div class="analysis-carousel">
+        <div class="analysis-view is-active">
+          <div class="analysis-section-heading analysis-logo-heading">
+            <div class="analysis-logo-stack">
+              <img class="analysis-wordmark" src="img/logo-the-little-orchard.png" alt="The Little Orchard">
+            </div>
+          </div>
 
+          <div class="ranking-feature-grid ranking-feature-grid-extended">
+            <aside class="parcel-column" aria-label="Plot performance">
+              <div class="parcel-panel">
+                <div class="parcel-grid" id="parcelGrid"></div>
+              </div>
+            </aside>
 
-    <script src="script.js"></script>
-    
+            <div class="top3-column">
+              <div class="podium-shell">
+                <div class="podium-grid" id="podiumGrid"></div>
+              </div>
+              <div class="compare-shell">
+                <div class="compare-grid" id="compareGrid"></div>
+              </div>
+              <div class="remaining-ranks" id="remainingRanks"></div>
+            </div>
+
+            <aside class="variety-column" aria-label="Apple varieties">
+              <div class="best-varieties" id="bestVarieties"></div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="js/excel-reader.js"></script>
+  <script src="js/start.js"></script>
 </body>
-</html
+</html>
