@@ -310,13 +310,18 @@ function buildCartsHTML(y) {
     maakKar('sold', 'Sold', sold, '#d9a646', buildSalesIcon());
 }
 
-function buildTruckHTML(y) {
-  const sold = handlingTonnes(y, 'sold');
-  return `<div class="sales-truck-btn" aria-label="Truck carrying ${formatNumber(sold, 1)} tonnes sold">
-    <svg class="d3-truck-svg" data-year="${y}" viewBox="0 0 300 120" preserveAspectRatio="none" role="img" aria-label="Truck, sales ${formatNumber(sold, 1)} tonnes"></svg>
+function buildTruckHTML(year) {
+  let freightCost = Number(FINANCIAL_SUMMARY.accounts['Vracht'][year])
+  if (Number.isNaN(freightCost)) {
+    freightCost = 0 
+  }
 
-    <div class="ops-big-tip"><strong>sold</strong><span>${formatNumber(sold, 1)} tonnes in ${y}</span></div>
-  </div>`;
+  const freightText = formatEuro(freightCost, 2);
+
+  return '<div class="sales-truck-btn" aria-label="Freight costs ' + freightText + '">' +
+    '<svg class="d3-truck-svg" data-year="' + year + '" viewBox="0 0 300 120" preserveAspectRatio="none" role="img" aria-label="Truck freight costs ' + freightText + '"></svg>' +
+    '<div class="ops-big-tip"><strong>freight costs</strong><span>' + freightText + ' in ' + year + '</span></div>' +
+    '</div>'
 }
 function buildMoneyCoins(y) {
   const entries = [

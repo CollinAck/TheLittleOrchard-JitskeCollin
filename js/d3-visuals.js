@@ -369,22 +369,6 @@
         .attr('font-weight', 700).attr('font-size', 18).attr('fill', '#fff').text(rank);
     });
 
-    const parcels = ['1', '2', '3', '4', '5', '6'].map(id => ({
-      id, total: YEARS.reduce((sum, year) => sum + numberOrZero(ORCHARD_DATA.production?.[year]?.[id]?.tons), 0)
-    })).sort((a, b) => b.total - a.total);
-    d3.select('#parcelGrid').selectAll('.parcel-card').data(parcels).each(function (item, index) {
-      const icon = this.querySelector('.parcel-icon'); if (!icon) return;
-      d3.select(icon).selectAll('svg:not(.nope)').filter(function () { return this.parentNode === icon; }).remove();
-      const svg = d3.select(icon).append('svg').attr('class', 'd3-parcel-map')
-        .attr('viewBox', '0 0 54 35').attr('role', 'img')
-        .attr('aria-label', `Plot ${item.id}, rank ${index + 1}, ${formatNumber(item.total, 0)} tonnes`);
-      const highlight = index === 0 ? '#d4ad4a' : index === 1 ? '#bcc4cf' : index === 2 ? '#c48d5a' : '#9db38f';
-      svg.selectAll('rect').data(d3.range(6)).enter().append('rect')
-        .attr('x', i => 2 + (i % 3) * 19).attr('y', i => 2 + Math.floor(i / 3) * 19)
-        .attr('width', 14).attr('height', 14).attr('rx', 3)
-        .attr('fill', i => i + 1 === Number(item.id) ? highlight : '#f3ede0')
-        .attr('stroke', i => i + 1 === Number(item.id) ? '#6d6256' : '#c9b9a8').attr('stroke-width', 1.3);
-    });
     const totalsByVariety = {};
     YEARS.forEach(year => appleVarieties(year).forEach(([name, tons]) => { totalsByVariety[name] = (totalsByVariety[name] || 0) + numberOrZero(tons); }));
     const sortedVarieties = Object.entries(totalsByVariety).sort((a, b) => b[1] - a[1]);
