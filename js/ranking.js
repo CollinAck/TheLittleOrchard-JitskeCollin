@@ -3,8 +3,7 @@
   const compareGrid = document.getElementById('compareGrid');
   const remainingRanks = document.getElementById('remainingRanks');
   const bestVarietiesEl = document.getElementById('bestVarieties');
-  const parcelGrid = document.getElementById('parcelGrid');
-  if (!podiumGrid || !compareGrid || !remainingRanks || !bestVarietiesEl || !parcelGrid) return;
+  if (!podiumGrid || !compareGrid || !remainingRanks || !bestVarietiesEl) return;
 
   const top3 = [...YEARS].filter(y => YEAR_RANKING[y] <= 3).sort((a, b) => YEAR_RANKING[a] - YEAR_RANKING[b]);
 
@@ -67,17 +66,7 @@
       <text x="31" y="34" font-family="Georgia,serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${rank}</text>
     </svg>`;
   }
-  function buildPlotCornerRank(rank) {
-    if (rank <= 3) {
-      const trophy = rank === 1
-        ? { main: '#d7b24a', dark: '#a57d22', light: '#f3de8b', text: '#6b4d11' }
-        : rank === 2
-          ? { main: '#bfc4cc', dark: '#858c97', light: '#eceff3', text: '#3f4650' }
-          : { main: '#c48452', dark: '#8f5a33', light: '#e2b08a', text: '#5a3419' };
-      return `<span class="parcel-rank-marker top" title="Rank ${rank} by total harvest from 2010 to 2017" aria-label="Rank ${rank}"><svg viewBox="0 0 72 72" aria-hidden="true"><path d="M23 16h26v10c0 8.6-5.9 15.4-13 15.4S23 34.6 23 26v-10Z" fill="${trophy.main}" stroke="${trophy.dark}" stroke-width="2.4"/><path d="M23 20h-7c0 8.2 2.9 12.9 9.3 15.2M49 20h7c0 8.2-2.9 12.9-9.3 15.2" fill="none" stroke="${trophy.dark}" stroke-width="2.6" stroke-linecap="round"/><path d="M30 42h12v8l6 5H24l6-5v-8Z" fill="${trophy.main}" stroke="${trophy.dark}" stroke-width="2.2"/><rect x="22" y="55" width="28" height="7" rx="3.5" fill="${trophy.dark}"/><circle cx="36" cy="29" r="10.8" fill="${trophy.light}" stroke="${trophy.dark}" stroke-width="1.7"/><text class="ptext" x="36" y="29.8" font-family="Georgia,serif" font-size="15" font-weight="700" text-anchor="middle" dominant-baseline="middle">${rank}</text></svg></span>`;
-    }
-    return `<span class="parcel-rank-marker apple" title="Rank ${rank} by total harvest from 2010 to 2017" aria-label="Rank ${rank}"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M31 15c-7-7-18-2-21 8-5 17 6 30 21 30s26-13 21-30c-3-10-14-15-21-8Z" fill="#a9433b" stroke="#7a4b36" stroke-width="2"/><path d="M31 16c0-6 3-10 8-13" fill="none" stroke="#6b4a32" stroke-width="3" stroke-linecap="round"/><path d="M35 8c5-5 11-4 14-1-3 5-9 7-14 1Z" fill="#6f945f"/><text class="ptext" x="31" y="34" font-family="Georgia,serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="middle">${rank}</text></svg></span>`;
-  }
+
   remainingRanks.innerHTML = remaining.map(y => {
     const rank = YEAR_RANKING[y];
     return `<article class="rank-row" aria-label="Rank ${rank}, year ${y}">
@@ -90,32 +79,5 @@
       </div>
     </article>`;
   }).join('');
-
-  const parcelIds = ['1', '2', '3', '4', '5', '6'];
-  const parcelSubcodes = { '1': [], '2': ['2A', '2B', '2C'], '3': [], '4': ['4A'], '5': [], '6': [] };
-  const parcelSummary = parcelIds.map(id => {
-    const yearly = YEARS.map(y => ({ year: y, tons: Number(ORCHARD_DATA.production?.[y]?.[id]?.tons || 0) }));
-    const total = yearly.reduce((sum, item) => sum + item.tons, 0);
-    const activeYears = yearly.filter(item => item.tons > 0).length;
-    const best = yearly.reduce((best, item) => item.tons > (best?.tons || -1) ? item : best, { year: '—', tons: 0 });
-    const varTotals = {};
-    YEARS.forEach(y => {
-      const vars = ORCHARD_DATA.production?.[y]?.[id]?.varieties || {};
-      Object.entries(vars).forEach(([name, tons]) => { varTotals[name] = (varTotals[name] || 0) + Number(tons || 0); });
-    });
-    const dominant = Object.entries(varTotals).sort((a, b) => b[1] - a[1])[0] || ['—', 0];
-    return { id, label: id, subcodes: parcelSubcodes[id] || [], total: total, activeYears, bestYear: best.year, bestTons: best.tons, dominant: dominant[0], dominantTons: dominant[1] };
-  }).sort((a, b) => b.total - a.total);
-  parcelSummary.forEach((parcel, index) => { parcel.rank = index + 1; });
-  parcelGrid.innerHTML = parcelSummary.map(parcel => `<article class="parcel-card ${parcel.rank <= 3 ? 'top-rank' : ''}" aria-label="Plot ${parcel.label}, rank ${parcel.rank}">
-    <div class="parcel-body">
-      <div class="parcel-icon"><span class="parcel-number">${parcel.label}${buildPlotCornerRank(parcel.rank)}</span>${parcel.subcodes.length ? `<div class="parcel-subcodes">${parcel.subcodes.map(code => `<span class="parcel-subcode">${code}</span>`).join('')}</div>` : ''}</div>
-      <div class="parcel-quick">
-        <div class="parcel-quick-item"><small>harvest</small><strong>${formatNumber(parcel.total, 0)} tonnes</strong></div>
-        <div class="parcel-quick-item"><small>best year</small><strong>${parcel.bestYear}</strong></div>
-      </div>
-    </div>
-  </article>`).join('');
-
 
 })();

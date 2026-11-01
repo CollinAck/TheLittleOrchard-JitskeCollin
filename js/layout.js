@@ -40,7 +40,7 @@
     truck.style.left = `${truckLeft}px`;
     carts.style.transform = `scale(${scale})`;
     truck.style.transform = `scale(${scale})`;
-
+      
   }
   function calculateLayout() {
     scheduled = false; pages.forEach(layoutPage);

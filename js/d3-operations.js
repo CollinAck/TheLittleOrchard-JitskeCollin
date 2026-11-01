@@ -195,6 +195,20 @@
 
     const vehicle = svg.append('g').attr('class', 'd3-truck-art');
 
+    const freightCosts = FINANCIAL_SUMMARY.accounts['Vracht']
+    const highestFreightCost = d3.max(Object.values(freightCosts))
+    const truckSizeScale = d3.scaleLinear()
+      .domain([0, highestFreightCost])
+      .range([0.50, 1.40])
+
+    let currentfreightCosts = Number(freightCosts[element.dataset.year])
+    if (Number.isNaN(currentfreightCosts)) {
+      currentfreightCosts = 0
+    }
+
+    const truckSize = truckSizeScale(currentfreightCosts)
+    vehicle.attr('transform', 'translate(150 120) scale(' + truckSize + ') translate(-150 -120)')
+
     vehicle.append('rect')
       .attr('x', 8).attr('y', 23)
       .attr('width', 219).attr('height', 70).attr('rx', 6)
