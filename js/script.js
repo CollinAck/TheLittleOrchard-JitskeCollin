@@ -325,13 +325,12 @@ function buildTruckHTML(year) {
 }
 function buildMoneyCoins(y) {
   const entries = [
-    { key: 'revenue', label: 'revenue', value: revenue(y), className: 'revenue' },
     { key: 'costs', label: 'costs', value: knownCosts(y), className: 'costs' },
     { key: 'profit', label: 'profit', value: profit(y), className: 'profit' }
   ];
   const stacks = entries.map(item => {
     const ratio = item.value / (MAX_COINS || 1);
-    const count = Math.max(2, Math.min(14, Math.round(ratio * 12) + 1));
+    const count = Math.max(2, Math.min(13, Math.round(ratio * 12) + 1));
     const coins = '<span class="coin"></span>'.repeat(count);
     return `<button class="money-stack ${item.className}" type="button" tabindex="0" aria-label="${item.label} ${formatEuro(item.value, 0)}">${coins}<span class="money-stack-tip"><strong>${item.label}</strong><span>${formatEuro(item.value, 0)} in ${y}</span></span></button>`;
   }).join('');

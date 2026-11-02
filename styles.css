@@ -1159,13 +1159,12 @@
 
   .money-coins-group {
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    align-items: end;
-    justify-items: center;
-    column-gap: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     height: 100%;
-    padding-top: 2px;
     width: 100%;
   }
 
