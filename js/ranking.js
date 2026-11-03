@@ -27,6 +27,7 @@
     const rank = YEAR_RANKING[y];
     return `<div class="podium-item rank-${rank}">
       <div class="rank-wrap podium-rank-wrap">${buildTrophyHTML(rank, y)}${buildRankingInfo(y)}</div>
+      <div class="podium-profit"> Profit: ${formatEuro(profit(y),0)}</div>
       <div class="podium-year">${y}</div>
       <div class="podium-rank">place ${rank}</div>
       <div class="podium-metric">${formatNumber(harvest(y), 0)} tonnes · ${formatEuro(profit(y), 0)} profit</div>
@@ -44,7 +45,6 @@
   compareGrid.innerHTML = order.map(y => {
     return `<article class="compare-card" aria-label="Vergelijking ${y}">
       ${buildComparisonRow('harvest', `${formatNumber(harvest(y), 0)} tonnes`, )}
-      ${buildComparisonRow('profit', `${formatEuro(profit(y), 0)}`, )}
       ${buildComparisonRow('price / kg', `€${formatNumber(price(y), 2)}`, )}
     </article>`;
   }).join('');

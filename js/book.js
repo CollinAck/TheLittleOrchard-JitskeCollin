@@ -10,13 +10,13 @@
     return `<article class="hyear-panel" data-year="${year}" aria-label="${year}">
       <div class="hyear-inner">
         ${buildSunLabel(year)}
+        <div class="stage-hail show" tabindex="0" aria-label="${hail ? 'Hagel gevallen in' + year : 'Geen hagel gevallen in ' + year}">${buildHailDisplay(year)}</div>
         <div class="balance" data-target-tilt="${tilt.toFixed(2)}" data-left-y="${(-tilt * 1.7).toFixed(1)}" data-right-y="${(tilt * 1.7).toFixed(1)}">
           <div class="beam-wrap" style="transform:rotate(0deg)">
             <div class="pan left" style="transform:translateY(0px)">
               <div class="bowl"></div><div class="apple-bin">${buildApplesHTML(year)}</div>
               <button class="spray-single" type="button" tabindex="0" aria-label="Pesticide in ${year}">${buildSpraySummary(year)}</button>
-            </div>
-            <div class="stage-hail ${hail ? 'show' : ''}" tabindex="0" aria-label="Hail in ${year}">${buildHailDisplay(year)}</div>
+            </div>            
             <div class="pan right" style="transform:translateY(0px)">
               <div class="bowl"></div><div class="money-bin">${buildMoneyCoins(year)}</div>
             </div>
