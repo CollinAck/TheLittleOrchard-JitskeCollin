@@ -7,7 +7,14 @@
     const hn = h / maxH, pn = pr / maxP;
     const tilt = (pn - hn) * 10;
     const hail = HAIL_COUNTS[year] || 0;
+
+    let yearLogo = ''
+    if (String(year) === '2017') {
+      yearLogo = '<img class="year-logo" src="img/logo-the-little-orchard.png">'
+    }
+
     return `<article class="hyear-panel" data-year="${year}" aria-label="${year}">
+      ${yearLogo}
       <div class="hyear-inner">
         ${buildSunLabel(year)}
         <div class="stage-hail show" tabindex="0" aria-label="${hail ? 'Hagel gevallen in' + year : 'Geen hagel gevallen in ' + year}">${buildHailDisplay(year)}</div>

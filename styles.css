@@ -3912,6 +3912,7 @@ main::after,
       display: none;
     }
   }
+
   @layer overrides {
     .top3-column .podium-profit {
       display:block;
@@ -3946,6 +3947,18 @@ main::after,
       height: 65px;
       transform: none;
       z-index: 6;
+    }
+  }
+
+  @layer overrides {
+    .year-logo {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 400px;
+      max-width: 45%;
+      height: auto;
+      z-index: 25;
     }
   }
 

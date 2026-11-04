@@ -343,13 +343,6 @@ function handlingTonnes(y, type) {
   return Math.max(0, Number(HANDLING_TONNES[y]?.[type] || 0));
 }
 
-function buildCoolingIcon() {
-  return `<img src="img/icon-cooling.png" alt="" style="width:100%;height:100%;object-fit:contain;display:block">`;
-}
-function buildSalesIcon() {
-  return `<img src="img/icon-sold.png" alt="" style="width:100%;height:100%;object-fit:contain;display:block">`;
-}
-
 function buildCartsHTML(y) {
   const cooled = handlingTonnes(y, 'cooling'), sold = handlingTonnes(y, 'sold');
   const total = Math.max(1, cooled + sold);
@@ -369,9 +362,9 @@ function buildCartsHTML(y) {
       <svg class="d3-cart-svg" data-kind="${kind}" data-year="${y}" role="img" aria-label="Wooden cart: ${label} ${formatNumber(value, 1)} tonnes" viewBox="0 0 134 128" preserveAspectRatio="none"></svg>
     </div>`;
   };
-  return maakKar('cool', 'Cooling', cooled, '#79b7dc', buildCoolingIcon()) +
+  return maakKar('cool', 'Cooling', cooled, 'lightblue', '') +
     `<div class="crate-link" aria-hidden="true"></div>` +
-    maakKar('sold', 'Sold', sold, '#d9a646', buildSalesIcon());
+    maakKar('sold', 'Sold', sold, 'goldenrod', '');
 }
 
 function buildTruckHTML(year) {
@@ -402,13 +395,18 @@ function buildMoneyCoins(y) {
 }
 
 function buildSunLabel(y) {
+  const sunSizeScale = d3.scaleLinear()
+    .domain(d3.extent(YEARS.map(totalSunHours)))
+    .range([0.7, 1.4])
+
+  const sunSize = sunSizeScale(totalSunHours(y))
+
   const rows = SEASON_ORDER.map(key => {
     const meta = SEASON_INFO[key];
     return `<div class="year-sun-row"><span class="year-sun-label"><span class="year-sun-icon">${meta.icon}</span></span><span>${formatNumber(sunHoursBySeason(y, key), 0)} hours</span></div>`;
   }).join('');
-  return `<button class="year-sun" type="button" tabindex="0" aria-label="Sunshine hours: ${formatNumber(totalSunHours(y), 0)} hours in ${y}"><span class="year-sun-core"></span><span class="year-sun-tip">${rows}<div class="year-sun-total">Total ${formatNumber(totalSunHours(y), 0)} hours</div></span></button>`;
+  return `<button class="year-sun" type="button" tabindex="0" aria-label="Sunshine hours: ${formatNumber(totalSunHours(y), 0)} hours in ${y}"><span class="year-sun-core" style="scale:${sunSize}"></span><span class="year-sun-tip">${rows}<div class="year-sun-total">Total ${formatNumber(totalSunHours(y), 0)} hours</div></span></button>`;
 }
-
 
 function buildYearRankSymbol(rank, cx, cy, size) {
   if (rank <= 3) {
