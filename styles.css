@@ -3962,4 +3962,22 @@ main::after,
     }
   }
 
+  .d3-harvest-apple {
+    cursor: pointer;
+  }
+
+  .appel-tooltip {
+    position: fixed;
+    display: none;
+    min-width: 120px;
+    padding: 9px 11px;
+    border-radius: 12px;
+    background: rgba(255,250,242,.99);
+    border: 1px solid rgba(82,68,50,.16);
+    box-shadow: 0 12px 28px rgba(62,49,33,.16);
+    display: none;
+    text-align: center;
+    z-index: 70;
+  }
+
 }

@@ -344,6 +344,20 @@
       .attr('fill', '#6b6d66');
 
     wheels.append('circle').attr('r', 2.5).attr('fill', '#777b76');
+
+    const year = element.dataset.year
+    const index = YEARS.indexOf(year)
+
+    if (index >= 0 && index < YEARS.length - 1) {
+      const prevYear = YEARS[index + 1]
+      const prevCosts = Number(freightCosts[prevYear]) || 0
+      const difference = currentfreightCosts - prevCosts
+      const direction = differenceDirection(difference)
+
+      vehicle.append('g')
+        .attr('class', 'truck-cost-trend')
+        .html(drawTimelineArrow(166, 35, 32, direction))
+    }
   }
 
   function drawDroplet(group, color) {

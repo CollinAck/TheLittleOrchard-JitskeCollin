@@ -24,6 +24,11 @@
       .attr('transform', 'rotate(-22 12 2.6)').attr('fill', '#78995f');
   }
 
+
+  const appelToolTip = d3.select('body')
+    .append('div')
+    .attr('class', 'appel-tooltip')
+
   function drawHarvestApples() {
     d3.selectAll('svg.d3-harvest-svg').each(function () {
       const year = this.getAttribute('data-year');
@@ -42,10 +47,30 @@
           const y = 50 + (row - (rows - 1) / 2) * 38;
           return `translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${(scale(d.tons) / 18).toFixed(3)}) translate(-9,-9)`;
         });
-      apples.each(function (d) { drawApple(d3.select(this), colorForVariety(d.name)); });
+
+      apples.each(function (d) { 
+        const appel = d3.select(this)
+        drawApple(appel, colorForVariety(d.name)); 
+
+        appel.on('mouseenter', function(event) {
+          appelToolTip
+            .text(`${d.name} - ${formatNumber(d.tons * 1000, 0)} kg in ${year}`)
+            .style('display', 'block')
+            .style('left', `${event.clientX + 15}px`)
+            .style('top', `${event.clientY - 45}px`)
+        })
+        appel.on('mousemove', function(event) {
+          appelToolTip
+            .style('left', `${event.clientX + 15}px`)
+            .style('top', `${event.clientY - 45}px`)
+        })
+        appel.on('mouseleave', function() {
+          appelToolTip
+            .style('display', 'none')
+        })
+      });
     });
   }
-
 
   function buildScale(balance) {
     const beamWrap = balance.querySelector('.beam-wrap');
