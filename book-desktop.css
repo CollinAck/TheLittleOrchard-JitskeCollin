@@ -1,0 +1,113 @@
+@media (min-width: 981px) {
+
+  .orchard-book-shell .horizontal-story {
+    --roadHeight: clamp(160px, 17vh, 365px);
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  .orchard-book-shell .hyear-panel {
+    height: 100%;
+  }
+
+  .orchard-book-shell .hyear-inner {
+    width: 850px;
+    height: 650px;
+
+    left: 50%;
+    top: var(--orchard-scene-top, 25px);
+    bottom: auto;
+
+    transform:
+      translateX(-50%)
+      scale(var(--orchard-scene-scale, 1));
+
+    transform-origin: center top;
+  }
+
+  .orchard-book-shell .hyear-panel .balance {
+    width: 700px;
+    height: 410px;
+
+    margin: 10px auto 0;
+
+    transform: none;
+    transform-origin: top center;
+  }
+
+  .orchard-book-shell .hyear-inner .hyear-ops {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 190px;
+
+    transform: none;
+  }
+
+  .orchard-book-shell
+  .hyear-inner
+  .hyear-ops
+  .handling-crate-wrap,
+
+  .orchard-book-shell
+  .hyear-inner
+  .hyear-ops
+  .sales-truck-wrap {
+    transform-origin: left bottom;
+  }
+
+  .orchard-book-shell .hyear-inner > .stage-hail {
+    right: 190px;
+    top: 35px;
+  }
+
+  .orchard-book-shell .year-sun {
+    right: 8px;
+
+    transform: scale(.94);
+    transform-origin: top right;
+  }
+
+  .orchard-book-shell .hroad-svg {
+    height: var(--roadHeight);
+  }
+
+  .orchard-book-shell .year-logo {
+    width: clamp(
+      240px,
+      calc(400px * var(--orchard-scene-scale, 1)),
+      1100px
+    );
+
+    max-width: 45%;
+
+    left: clamp(20px, 1.3vw, 55px);
+    top: clamp(17px, 1.3vw, 55px);
+  }
+
+  .orchard-book-shell
+  .hyear-inner
+  .spray-single-tip {
+    left: 10px;
+    transform: none;
+  }
+}
+
+.orchard-book-shell
+.spray-single:focus-within
+.spray-single-tip,
+
+.orchard-book-shell
+.stage-hail:focus-within
+.stage-hail-tip,
+
+.orchard-book-shell
+.year-sun:focus-within
+.year-sun-tip {
+  display: block;
+}

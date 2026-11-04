@@ -68,8 +68,18 @@
     }
     return window.innerWidth <= 980 ? window.innerWidth : window.innerWidth * .50;
   }
+  function roadSymbolScale() {
+    return window.innerWidth > 980
+      ? Math.min(
+          2.2,
+          Math.max(1, window.innerWidth / 1500)
+        )
+      : 1;
+  }
   function yearOffset() {
-    return window.innerWidth <= 760 ? 72 : 112;
+    return window.innerWidth <= 760
+      ? 72
+      : 112 * roadSymbolScale();
   }
   function maximumScroll() {
     return Math.max(0, track.scrollWidth - viewport.clientWidth);
@@ -112,12 +122,36 @@
   function drawHorizontalSandPath() {
     const pw = pageWidth();
     const total = pw * YEARS.length;
-    const h = window.innerWidth <= 760 ? 174 : 194;
-    const y = window.innerWidth <= 760 ? 58 : 64;
+    const h = window.innerWidth <= 760
+      ? 174
+      : (
+        window.innerWidth > 980
+          ? Math.max(
+              160,
+              hroad.getBoundingClientRect().height || 194
+            )
+          : 194
+      );
+
+    const y = window.innerWidth <= 760
+      ? 58
+      : (
+        window.innerWidth > 980
+          ? Math.round(h * 0.45)
+          : 64
+      );
     const compact = window.innerWidth <= 760;
     const beginIconX = total - (compact ? 190 : 270);
     window.OrchardD3Road.drawBook(hroad, {
-      total: total, h, y, compact, beginIconX, pw, years: YEARS, activeYear: selectedYear,
+      total: total,
+      h,
+      y,
+      compact,
+      beginIconX,
+      pw,
+      years: YEARS,
+      activeYear: selectedYear,
+      symbolScale: roadSymbolScale(),
       yearOffset: yearOffset(), periods: HARVEST_PERIODS, ranks: YEAR_RANKING,
       badge: buildYearRankSymbol, extras: buildTimelineDetails
     });

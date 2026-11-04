@@ -42,6 +42,11 @@
       .enter()
       .append('g')
       .attr('class', year => `road-stop-hit ${year.active ? 'active' : 'ghost'}`)
+      .attr('transform', year =>
+        options.symbolScale > 1
+          ? `translate(${year.x},${centerY}) scale(${options.symbolScale}) translate(${-year.x},${-centerY})`
+          : null
+)
       .attr('data-year', year => year.year)
       .attr('data-tip', year => `Harvest period ${options.periods[year.year] || 'unknown'}`)
       .attr('tabindex', 0)
@@ -147,7 +152,8 @@
       rank: options.ranks,
       badge: options.badge,
       periods: options.periods,
-      compactRoad: true
+      compactRoad: true,
+      symbolScale: options.symbolScale || 1
     });
 
     years.forEach(year => {
@@ -173,7 +179,29 @@
     </g>`;
 
     addExtraIcons(svg, flag);
-  }
+    if (options.symbolScale > 1) {
+      svg
+        .selectAll(
+          'g.road-metric-hit:not(.road-flag-hit)'
+        )
+        .each(function () {
+          const box = this.getBBox();
+
+          const cx = box.x + box.width / 2;
+          const cy = box.y + box.height / 2;
+
+          if (
+            !Number.isFinite(cx) ||
+            !Number.isFinite(cy)
+          ) return;
+
+        this.setAttribute(
+          'transform',
+          `translate(${cx},${cy}) scale(${options.symbolScale}) translate(${-cx},${-cy})`
+        );
+      });
+}
+}
 
   window.OrchardD3Road = { drawBook: drawBookPath };
 })();

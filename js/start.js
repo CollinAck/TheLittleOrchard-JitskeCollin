@@ -10,10 +10,13 @@ async function startWebsite() {
     window.ORCHARD_DATA = workbookData.ORCHARD_DATA;
     window.FINANCIAL_SUMMARY = workbookData.FINANCIAL_SUMMARY;
 
-    for (const fileName of ['d3-road.js', 'script.js', 'book.js', 'ranking.js', 'layout.js', 'd3-visuals.js', 'd3-operations.js']) {
+    for (const fileName of ['d3-road.js', 'script.js', 'book.js', 'ranking.js', 'layout.js', 'd3-visuals.js', 'd3-operations.js', 'ground-wheels.js']) {
       await loadScript(fileName);
     }
-  } catch (error) {
+      window.dispatchEvent(
+        new Event('orchard-ready'))
+  } 
+  catch (error) {
     console.error(error);
     const message = document.createElement('div');
     message.className = 'excel-error';
