@@ -49,8 +49,8 @@ function compareAmountWithUnit(fn, y, formatter, unitText) {
   const current = Number(fn(y) || 0);
   const prev = Number(fn(earlier) || 0);
   const diff = current - prev;
-  if (Math.abs(diff) < 1e-9) return `${formatter(0)} unchanged from ${earlier}`;
-  return `${formatter(Math.abs(diff))} ${diff > 0 ? 'more' : 'less'} ${unitText} than ${earlier}`;
+  if (Math.abs(diff) < 1e-9) return `${formatter(0)} geen verandering in ${earlier}`;
+  return `${formatter(Math.abs(diff))} ${diff > 0 ? 'meer' : 'minder'} ${unitText} dan in ${earlier}`;
 }
 function drawLaborIcon(x, y, r) {
   const s = (r / 23).toFixed(3);
@@ -165,12 +165,12 @@ function buildTimelineDetails(year, x, y, nextPoint, prevPoint) {
   const isActive = year === selectedYear;
   const laborDirection = differenceDirection(compareWithEarlierYear(laborCosts, year));
   const priceDirection = differenceDirection(compareWithEarlierYear(price, year));
-  const laborTitle = compareAmountWithUnit(laborCosts, year, v => formatEuro(v, 0), 'labour costs');
+  const laborTitle = compareAmountWithUnit(laborCosts, year, v => formatEuro(v, 0), 'loonkosten');
   const previousYear = YEARS[YEARS.indexOf(year) + 1];
   const priceDifference = previousYear ? price(year) - price(previousYear) : 0;
   const priceTitle = previousYear ? `Gemiddeld € ${formatNumber(Math.abs(priceDifference), 2)} ${priceDifference > 0 ? 'meer' : priceDifference < 0 ? 'minder' : 'verschil'} per kg dan ${previousYear}` : '';
   const parcelCount = usedPlots(year);
-  const parcelTitle = `${parcelCount} plot${parcelCount === 1 ? '' : 's'} used in ${year}`;
+  const parcelTitle = `${parcelCount} percelen${parcelCount === 1 ? '' : 's'} gebruikt in ${year}`;
   const target = nextPoint || { x: x + (prevPoint ? Math.max(126, Math.abs(x - prevPoint.x) * 0.48) : 126), y };
   const offsetY = y + (mobile ? 2 : 3);
   const points = [0.34, 0.54, 0.74].map(t => ({ x: x + (target.x - x) * t, y: offsetY }));
@@ -197,7 +197,7 @@ function buildTimelineDetails(year, x, y, nextPoint, prevPoint) {
 
 function buildHailDisplay(year) {
   const count = HAIL_COUNTS[year] || 0;
-  return `<div class="stage-hail-tip"><span>${count} hailstorms</span></div>
+  return `<div class="stage-hail-tip"><span>${count} hagelstormen</span></div>
   <svg viewBox="0 0 120 86" aria-hidden="true">
     <defs>
       <linearGradient id="hailCloud" x1="0" y1="0" x2="0" y2="1">
@@ -357,14 +357,15 @@ function buildCartsHTML(y) {
           <span class="crate-apple" style="width:${size}px;height:${size}px">${buildAppleSVG(color)}</span>
           <span class="crate-icon" style="width:${ic}px;height:${ic}px">${icon}</span>
         </span></div>
-        <div class="crate-tip"><strong>${label.toLowerCase()}</strong><span>${formatNumber(value, 1)} tonnes in ${y}</span></div>
+        <div class="crate-tip"><strong>${label.toLowerCase()}</strong><span>${formatNumber(value, 1)} ton in ${y}</span></div>
       </button>
       <svg class="d3-cart-svg" data-kind="${kind}" data-year="${y}" role="img" aria-label="Wooden cart: ${label} ${formatNumber(value, 1)} tonnes" viewBox="0 0 134 128" preserveAspectRatio="none"></svg>
+        <span class="cart-text">${label}</span>
     </div>`;
   };
-  return maakKar('cool', 'Cooling', cooled, 'lightblue', '') +
+  return maakKar('cool', 'Koeling', cooled, 'lightblue', '') +
     `<div class="crate-link" aria-hidden="true"></div>` +
-    maakKar('sold', 'Sold', sold, 'goldenrod', '');
+    maakKar('sold', 'Afgezet', sold, 'goldenrod', '');
 }
 
 function buildTruckHTML(year) {
@@ -377,13 +378,13 @@ function buildTruckHTML(year) {
 
   return '<div class="sales-truck-btn" aria-label="Freight costs ' + freightText + '">' +
     '<svg class="d3-truck-svg" data-year="' + year + '" viewBox="0 0 300 120" preserveAspectRatio="none" role="img" aria-label="Truck freight costs ' + freightText + '"></svg>' +
-    '<div class="ops-big-tip"><strong>freight costs</strong><span>' + freightText + ' in ' + year + '</span></div>' +
+    '<div class="ops-big-tip"><strong>Transportkosten</strong><span>' + freightText + ' in ' + year + '</span></div>' +
     '</div>'
 }
 function buildMoneyCoins(y) {
   const entries = [
-    { key: 'costs', label: 'costs', value: knownCosts(y), className: 'costs' },
-    { key: 'profit', label: 'profit', value: profit(y), className: 'profit' }
+    { key: 'costs', label: 'Kosten', value: knownCosts(y), className: 'costs' },
+    { key: 'profit', label: 'Winst', value: profit(y), className: 'profit' }
   ];
   const stacks = entries.map(item => {
     const ratio = item.value / (MAX_COINS || 1);
@@ -403,9 +404,9 @@ function buildSunLabel(y) {
 
   const rows = SEASON_ORDER.map(key => {
     const meta = SEASON_INFO[key];
-    return `<div class="year-sun-row"><span class="year-sun-label"><span class="year-sun-icon">${meta.icon}</span></span><span>${formatNumber(sunHoursBySeason(y, key), 0)} hours</span></div>`;
+    return `<div class="year-sun-row"><span class="year-sun-label"><span class="year-sun-icon">${meta.icon}</span></span><span>${formatNumber(sunHoursBySeason(y, key), 0)} uur</span></div>`;
   }).join('');
-  return `<button class="year-sun" type="button" tabindex="0" aria-label="Sunshine hours: ${formatNumber(totalSunHours(y), 0)} hours in ${y}"><span class="year-sun-core" style="scale:${sunSize}"></span><span class="year-sun-tip">${rows}<div class="year-sun-total">Total ${formatNumber(totalSunHours(y), 0)} hours</div></span></button>`;
+  return `<button class="year-sun" type="button" tabindex="0" aria-label="Zonuren: ${formatNumber(totalSunHours(y), 0)} uur in ${y}"><span class="year-sun-core" style="scale:${sunSize}"></span><span class="year-sun-tip">${rows}<div class="year-sun-total">Totaal ${formatNumber(totalSunHours(y), 0)} uur</div></span></button>`;
 }
 
 function buildYearRankSymbol(rank, cx, cy, size) {

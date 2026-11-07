@@ -48,10 +48,10 @@
           : null
 )
       .attr('data-year', year => year.year)
-      .attr('data-tip', year => `Harvest period ${options.periods[year.year] || 'unknown'}`)
+      .attr('data-tip', year => `Oogstperiode ${options.periods[year.year] || 'unknown'}`)
       .attr('tabindex', 0)
       .attr('role', 'button')
-      .attr('aria-label', year => `Go to ${year.year}, harvest period ${options.periods[year.year] || 'unknown'}`);
+      .attr('aria-label', year => `Ga naar ${year.year}, oogstperiode ${options.periods[year.year] || 'unknown'}`);
 
     buttons.append('rect')
       .attr('class', 'road-stop')
@@ -166,10 +166,10 @@
     });
 
     const flag = `<g class="road-metric-hit road-flag-hit"
-                     data-tip="Business founded"
+                     data-tip="Bedrijf opgericht"
                      tabindex="0"
                      role="img"
-                     aria-label="Business founded"
+                     aria-label="Bedrijf opgericht"
                      transform="translate(${options.beginIconX - 26} ${options.y - 34}) scale(1.2)">
       <path d="M17 47V11" fill="none" stroke="#5b4630"
             stroke-width="3.2" stroke-linecap="round"/>

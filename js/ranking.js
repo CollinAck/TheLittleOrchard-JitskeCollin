@@ -27,10 +27,10 @@
     const rank = YEAR_RANKING[y];
     return `<div class="podium-item rank-${rank}">
       <div class="rank-wrap podium-rank-wrap">${buildTrophyHTML(rank, y)}${buildRankingInfo(y)}</div>
-      <div class="podium-profit"> Profit: ${formatEuro(profit(y),0)}</div>
+      <div class="podium-profit"> Winst: ${formatEuro(profit(y),0)}</div>
       <div class="podium-year">${y}</div>
       <div class="podium-rank">place ${rank}</div>
-      <div class="podium-metric">${formatNumber(harvest(y), 0)} tonnes · ${formatEuro(profit(y), 0)} profit</div>
+      <div class="podium-metric">${formatNumber(harvest(y), 0)} ton · ${formatEuro(profit(y), 0)} winst</div>
       <div class="podium-base"><span class="podium-base-number">${rank}</span></div>
     </div>`;
   }
@@ -44,17 +44,17 @@
 
   compareGrid.innerHTML = order.map(y => {
     return `<article class="compare-card" aria-label="Vergelijking ${y}">
-      ${buildComparisonRow('harvest', `${formatNumber(harvest(y), 0)} tonnes`, )}
-      ${buildComparisonRow('price / kg', `€${formatNumber(price(y), 2)}`, )}
+      ${buildComparisonRow('Oogst', `${formatNumber(harvest(y), 0)} ton`, )}
+      ${buildComparisonRow('Prijs / kg', `€${formatNumber(price(y), 2)}`, )}
     </article>`;
   }).join('');
 
   const totalsByVariety = {};
   YEARS.forEach(y => appleVarieties(y).forEach(([name, tons]) => { totalsByVariety[name] = (totalsByVariety[name] || 0) + Number(tons || 0); }));
   const allVarieties = Object.entries(totalsByVariety).sort((a, b) => b[1] - a[1]);
-  bestVarietiesEl.innerHTML = allVarieties.map(([name, tons], idx) => `<article class="variety-rank-card" aria-label="${name}, ${formatNumber(tons, 1)} tonnes total">
+  bestVarietiesEl.innerHTML = allVarieties.map(([name, tons], idx) => `<article class="variety-rank-card" aria-label="${name}, ${formatNumber(tons, 1)} ton totaal">
     <div class="variety-rank-icon"><span aria-hidden="true">${buildAppleSVG(colorForVariety(name))}</span><span class="variety-rank-number">${idx + 1}</span></div>
-    <div class="variety-rank-copy"><strong>${name}</strong><small>${formatNumber(tons, 1)} tonnes · total 2010–2017</small><div class="variety-bar"></div></div>
+    <div class="variety-rank-copy"><strong>${name}</strong><small>${formatNumber(tons, 1)} ton · totaal 2010–2017</small><div class="variety-bar"></div></div>
   </article>`).join('');
 
   const remaining = [...YEARS].filter(y => YEAR_RANKING[y] > 3).sort((a, b) => YEAR_RANKING[a] - YEAR_RANKING[b]);
@@ -73,9 +73,9 @@
       <div class="rank-wrap">${buildRankAppleIcon(rank)}${buildRankingInfo(y)}</div>
       <div class="rank-row-year">${y}</div>
       <div class="rank-row-metrics">
-        <div class="rank-row-metric"><small>harvest</small><strong>${formatNumber(harvest(y), 0)} tonnes</strong><div class="rank-row-bar"></div></div>
-        <div class="rank-row-metric"><small>profit</small><strong>${formatEuro(profit(y), 0)}</strong><div class="rank-row-bar"></div></div>
-        <div class="rank-row-metric"><small>price / kg</small><strong>€${formatNumber(price(y), 2)}</strong><div class="rank-row-bar"></div></div>
+        <div class="rank-row-metric"><small>Oogst</small><strong>${formatNumber(harvest(y), 0)} ton</strong><div class="rank-row-bar"></div></div>
+        <div class="rank-row-metric"><small>Winst</small><strong>${formatEuro(profit(y), 0)}</strong><div class="rank-row-bar"></div></div>
+        <div class="rank-row-metric"><small>Prijs / kg</small><strong>€${formatNumber(price(y), 2)}</strong><div class="rank-row-bar"></div></div>
       </div>
     </article>`;
   }).join('');

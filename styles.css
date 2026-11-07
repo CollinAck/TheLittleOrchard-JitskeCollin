@@ -3975,9 +3975,53 @@ main::after,
     background: rgba(255,250,242,.99);
     border: 1px solid rgba(82,68,50,.16);
     box-shadow: 0 12px 28px rgba(62,49,33,.16);
-    display: none;
     text-align: center;
     z-index: 70;
   }
 
+  .text-below-scale {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    z-index: 20; 
+    }
+
+    .costs-red {
+      color: red;
+    }
+
+    .nett-green {
+      color: green;
+    }
+
+    .text-above-scale {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      z-index: 20; 
+    }
+
+    .cart-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: black;
+      z-index: 20;
+      pointer-events: none;
+    }
 }

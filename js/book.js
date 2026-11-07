@@ -25,10 +25,18 @@
               <button class="spray-single" type="button" tabindex="0" aria-label="Pesticide in ${year}">${buildSpraySummary(year)}</button>
             </div>            
             <div class="pan right" style="transform:translateY(0px)">
+              <div class="text-above-scale">
+                <span class="costs-red">Kosten</span> en 
+                <span class="nett-green">winst</span> 
+              </div>
               <div class="bowl"></div><div class="money-bin">${buildMoneyCoins(year)}</div>
             </div>
           </div>
           <div class="stand-post"></div>
+          <p class="text-below-scale">De weeghschaal vergelijkt de oogst in tonnen met de winst in euro's.<br>
+          Meer geoogste appels betekent niet automatisch meer winst, <br>
+          omdat ook de kosten en verkoopprijzen invloed hebben.</p>
+          
         </div>
         ${buildFallingApplesHTML(year)}
         <div class="hyear-ops" aria-label="Cooling and sales ${year}">
