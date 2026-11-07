@@ -49,8 +49,8 @@ function compareAmountWithUnit(fn, y, formatter, unitText) {
   const current = Number(fn(y) || 0);
   const prev = Number(fn(earlier) || 0);
   const diff = current - prev;
-  if (Math.abs(diff) < 1e-9) return `${formatter(0)} unchanged from ${earlier}`;
-  return `${formatter(Math.abs(diff))} ${diff > 0 ? 'more' : 'less'} ${unitText} than ${earlier}`;
+  if (Math.abs(diff) < 1e-9) return `${formatter(0)} geen verandering in ${earlier}`;
+  return `${formatter(Math.abs(diff))} ${diff > 0 ? 'meer' : 'minder'} ${unitText} dan in ${earlier}`;
 }
 function drawLaborIcon(x, y, r) {
   const s = (r / 23).toFixed(3);
@@ -165,10 +165,12 @@ function buildTimelineDetails(year, x, y, nextPoint, prevPoint) {
   const isActive = year === selectedYear;
   const laborDirection = differenceDirection(compareWithEarlierYear(laborCosts, year));
   const priceDirection = differenceDirection(compareWithEarlierYear(price, year));
-  const laborTitle = compareAmountWithUnit(laborCosts, year, v => formatEuro(v, 0), 'labour costs');
-  const priceTitle = compareAmountWithUnit(price, year, v => formatEuro(v, 2), 'per kg');
+  const laborTitle = compareAmountWithUnit(laborCosts, year, v => formatEuro(v, 0), 'loonkosten');
+  const previousYear = YEARS[YEARS.indexOf(year) + 1];
+  const priceDifference = previousYear ? price(year) - price(previousYear) : 0;
+  const priceTitle = previousYear ? `Gemiddeld € ${formatNumber(Math.abs(priceDifference), 2)} ${priceDifference > 0 ? 'meer' : priceDifference < 0 ? 'minder' : 'verschil'} per kg dan ${previousYear}` : '';
   const parcelCount = usedPlots(year);
-  const parcelTitle = `${parcelCount} plot${parcelCount === 1 ? '' : 's'} used in ${year}`;
+  const parcelTitle = `${parcelCount} percelen${parcelCount === 1 ? '' : 's'} gebruikt in ${year}`;
   const target = nextPoint || { x: x + (prevPoint ? Math.max(126, Math.abs(x - prevPoint.x) * 0.48) : 126), y };
   const offsetY = y + (mobile ? 2 : 3);
   const points = [0.34, 0.54, 0.74].map(t => ({ x: x + (target.x - x) * t, y: offsetY }));
@@ -195,8 +197,7 @@ function buildTimelineDetails(year, x, y, nextPoint, prevPoint) {
 
 function buildHailDisplay(year) {
   const count = HAIL_COUNTS[year] || 0;
-  if (!count) return '';
-  return `<div class="stage-hail-tip"><span>${count} hailstorms</span></div>
+  return `<div class="stage-hail-tip"><span>${count} hagelstormen</span></div>
   <svg viewBox="0 0 120 86" aria-hidden="true">
     <defs>
       <linearGradient id="hailCloud" x1="0" y1="0" x2="0" y2="1">
@@ -214,6 +215,7 @@ function buildHailDisplay(year) {
     <circle cx="73" cy="62" r="5.2" fill="url(#hailStone)" stroke="#8da6c2" stroke-width="1.2"/>
     <circle cx="89" cy="70" r="5.4" fill="url(#hailStone)" stroke="#8da6c2" stroke-width="1.2"/>
     <path d="M37 55 L39 59 M54 63 L56 66 M72 55 L74 59 M88 63 L90 66" stroke="#9eb6d5" stroke-width="1.2" stroke-linecap="round"/>
+    ${count === 0 ? '<line x1="12" y1="78" x2="100" y2="8" stroke="#c94b43" stroke-width="5" stroke-linecap="round"/>': ''}
   </svg>`;
 }
 function appleVarieties(y) {
@@ -248,19 +250,82 @@ function buildFallingApplesHTML(y) {
 
 const HANDLING_TONNES = ORCHARD_DATA.handling;
 
-const SUN_HOURS = {
-  "2017": { spring: 418, summer: 692, autumn: 352, winter: 198 },
-  "2016": { spring: 392, summer: 666, autumn: 334, winter: 182 },
-  "2015": { spring: 448, summer: 724, autumn: 382, winter: 214 },
-  "2014": { spring: 364, summer: 608, autumn: 301, winter: 171 },
-  "2013": { spring: 381, summer: 651, autumn: 318, winter: 188 },
-  "2012": { spring: 401, summer: 673, autumn: 348, winter: 201 },
-  "2011": { spring: 342, summer: 592, autumn: 286, winter: 164 },
-  "2010": { spring: 372, summer: 621, autumn: 309, winter: 176 }
+const SUN_Q2_Q3 = {
+  "2017": { q2: 418, q3: 692 },
+  "2016": { q2: 392, q3: 666 },
+  "2015": { q2: 448, q3: 724 },
+  "2014": { q2: 364, q3: 608 },
+  "2013": { q2: 381, q3: 651 },
+  "2012": { q2: 401, q3: 673 },
+  "2011": { q2: 342, q3: 592 },
+  "2010": { q2: 372, q3: 621 }
 };
-const SEASON_ORDER = ['spring', 'summer', 'autumn', 'winter'];
+
+const HAIL_DATA = {
+  '2017': false,
+  '2016': false,
+  '2015': false,
+  '2014': true,
+  '2013': false,
+  '2012': true,
+  '2011': false,
+  '2010': true
+}
+
+function buildSunLabel(y) {
+  const data = SUN_Q2_Q3[y]; 
+  const q2 = data?.q2;
+  const q3 = data?.q3;
+  const total = q2 !=null && q3 != null ? q2 + q3 : null;
+  const totals = Object.values(SUN_Q2_Q3).filter(d => d.q2 != null && d.q3 != null).map(d => d.q2 + d.q3);
+  const min = Math.min(...totals); 
+  const max = Math.max(...totals);
+  let size = 62; 
+  if (total != null && max > min) {size = 55 + ((total - min) / (max - min)) * 140;}
+  return `
+    <div class="year-weather"> 
+      <button class="year-sun" type="button">
+        <span class="year-sun-core" 
+          style="width:${size}px;height:${size}px">
+          </span>
+        
+        <span class="year-sun-tip">
+          <span>Q2: ${q2} uur</span>
+          <span>Q3: ${q3} uur</span>
+        </span>
+      </button>
+      ${buildHailClaud(y)}
+
+    </div>`;
+}
+
+function buildHailClaud(y) { 
+  const hasHail = HAIL_DATA[y];
+  return `<div class = "year-hail ${hasHail ? '': 'no hail'}"title="${hasHail ? 'Hagel gevallen' : 'Geen hagel gevallen'}">
+    <svg viewBox="0 0 100 90" aria-hidden="true">
+      <!-- wolk -->
+      <path d="M25 59 
+              C10 59 7 45 15 36 
+              C20 29 27 28 34 30
+              C37 15 50 10 61 15
+              C72 19 76 28 77 35
+              C90 34 97 43 94 53
+              C92 60 85 63 75 63 
+              H25 Z" fill = "white" stroke = "#d6e2ea" stroke-width = "3"/>
+              
+      <!-- hagelstenen -->
+      <circle cx="35" cy="70" r= "6" fill ="#b9d6ed" stroke ="#91b5d1" stroke-width="2"/>
+      <circle cx="58" cy="82" r= "6" fill ="#b9d6ed" stroke ="#91b5d1" stroke-width="2"/>
+      <circle cx="80" cy="75" r= "6" fill ="#b9d6ed" stroke ="#91b5d1" stroke-width="2"/>
+
+      ${hasHail ? ` <line x1="12" y1="82" x2="94" y2="12" stroke="#c94b43" stroke-width="5" stroke-linecap="round"/>` : ''}
+    </svg>
+  </div>`;
+}
+
+const SEASON_ORDER = ['q2', 'q3'];
 function sunHoursBySeason(y, key) {
-  return Number(SUN_HOURS[y]?.[key] || 0);
+  return Number(SUN_Q2_Q3[y]?.[key] || 0);
 }
 function totalSunHours(y) {
   return SEASON_ORDER.reduce((sum, key) => sum + sunHoursBySeason(y, key), 0);
@@ -270,20 +335,12 @@ const MAX_COSTS = Math.max(...YEARS.map(knownCosts));
 const MAX_PROFIT = Math.max(...YEARS.map(profit));
 const MAX_COINS = Math.max(MAX_REVENUE, MAX_COSTS, MAX_PROFIT);
 const SEASON_INFO = {
-  spring: { label: '', icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 5c-6.5 1.2-10.8 5.1-12 11.5 4.3-.2 7.6-1.8 10.1-4.7-1.1 2.7-1.3 5.3-.6 7.7" fill="none" stroke="#6f9d4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 5c.3 4.5-1 7.8-4 10" fill="none" stroke="#8ebd68" stroke-width="2" stroke-linecap="round"/></svg>` },
-  summer: { label: '', icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="#efc24f" stroke="#c9972f" stroke-width="1.5"/><g stroke="#c9972f" stroke-width="1.7" stroke-linecap="round"><path d="M12 2.5v3"/><path d="M12 18.5v3"/><path d="M2.5 12h3"/><path d="M18.5 12h3"/><path d="M5.2 5.2l2.2 2.2"/><path d="M16.6 16.6l2.2 2.2"/><path d="M18.8 5.2l-2.2 2.2"/><path d="M7.4 16.6l-2.2 2.2"/></g></svg>` },
-  autumn: { label: '', icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 4c-6 1-11 5.5-12.5 12.5 5-.3 9-2.3 11.8-6 .3 2.8-.1 5.2-1.3 7.5" fill="none" stroke="#b77739" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 20.5c1.7-2.8 2.4-5.8 2-9.2" fill="none" stroke="#d69b5f" stroke-width="1.8" stroke-linecap="round"/></svg>` },
-  winter: { label: '', icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><g stroke="#86a9c8" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v18"/><path d="M3 12h18"/><path d="M5.6 5.6l12.8 12.8"/><path d="M18.4 5.6L5.6 18.4"/></g></svg>` }
+  q2: { label: '', icon: `<span>Q2</span>` },
+  q3: { label: '', icon: `<span>Q3</span>` }
 };
 
 function handlingTonnes(y, type) {
   return Math.max(0, Number(HANDLING_TONNES[y]?.[type] || 0));
-}
-function buildCoolingIcon() {
-  return `<img src="img/icon-cooling.png" alt="" style="width:100%;height:100%;object-fit:contain;display:block">`;
-}
-function buildSalesIcon() {
-  return `<img src="img/icon-sold.png" alt="" style="width:100%;height:100%;object-fit:contain;display:block">`;
 }
 
 function buildCartsHTML(y) {
@@ -300,14 +357,15 @@ function buildCartsHTML(y) {
           <span class="crate-apple" style="width:${size}px;height:${size}px">${buildAppleSVG(color)}</span>
           <span class="crate-icon" style="width:${ic}px;height:${ic}px">${icon}</span>
         </span></div>
-        <div class="crate-tip"><strong>${label.toLowerCase()}</strong><span>${formatNumber(value, 1)} tonnes in ${y}</span></div>
+        <div class="crate-tip"><strong>${label.toLowerCase()}</strong><span>${formatNumber(value, 1)} ton in ${y}</span></div>
       </button>
       <svg class="d3-cart-svg" data-kind="${kind}" data-year="${y}" role="img" aria-label="Wooden cart: ${label} ${formatNumber(value, 1)} tonnes" viewBox="0 0 134 128" preserveAspectRatio="none"></svg>
+        <span class="cart-text">${label}</span>
     </div>`;
   };
-  return maakKar('cool', 'Cooling', cooled, '#79b7dc', buildCoolingIcon()) +
+  return maakKar('cool', 'Koeling', cooled, 'lightblue', '') +
     `<div class="crate-link" aria-hidden="true"></div>` +
-    maakKar('sold', 'Sold', sold, '#d9a646', buildSalesIcon());
+    maakKar('sold', 'Afgezet', sold, 'goldenrod', '');
 }
 
 function buildTruckHTML(year) {
@@ -320,18 +378,17 @@ function buildTruckHTML(year) {
 
   return '<div class="sales-truck-btn" aria-label="Freight costs ' + freightText + '">' +
     '<svg class="d3-truck-svg" data-year="' + year + '" viewBox="0 0 300 120" preserveAspectRatio="none" role="img" aria-label="Truck freight costs ' + freightText + '"></svg>' +
-    '<div class="ops-big-tip"><strong>freight costs</strong><span>' + freightText + ' in ' + year + '</span></div>' +
+    '<div class="ops-big-tip"><strong>Transportkosten</strong><span>' + freightText + ' in ' + year + '</span></div>' +
     '</div>'
 }
 function buildMoneyCoins(y) {
   const entries = [
-    { key: 'revenue', label: 'revenue', value: revenue(y), className: 'revenue' },
-    { key: 'costs', label: 'costs', value: knownCosts(y), className: 'costs' },
-    { key: 'profit', label: 'profit', value: profit(y), className: 'profit' }
+    { key: 'costs', label: 'Kosten', value: knownCosts(y), className: 'costs' },
+    { key: 'profit', label: 'Winst', value: profit(y), className: 'profit' }
   ];
   const stacks = entries.map(item => {
     const ratio = item.value / (MAX_COINS || 1);
-    const count = Math.max(2, Math.min(14, Math.round(ratio * 12) + 1));
+    const count = Math.max(2, Math.min(13, Math.round(ratio * 12) + 1));
     const coins = '<span class="coin"></span>'.repeat(count);
     return `<button class="money-stack ${item.className}" type="button" tabindex="0" aria-label="${item.label} ${formatEuro(item.value, 0)}">${coins}<span class="money-stack-tip"><strong>${item.label}</strong><span>${formatEuro(item.value, 0)} in ${y}</span></span></button>`;
   }).join('');
@@ -339,13 +396,18 @@ function buildMoneyCoins(y) {
 }
 
 function buildSunLabel(y) {
+  const sunSizeScale = d3.scaleLinear()
+    .domain(d3.extent(YEARS.map(totalSunHours)))
+    .range([0.7, 1.4])
+
+  const sunSize = sunSizeScale(totalSunHours(y))
+
   const rows = SEASON_ORDER.map(key => {
     const meta = SEASON_INFO[key];
-    return `<div class="year-sun-row"><span class="year-sun-label"><span class="year-sun-icon">${meta.icon}</span></span><span>${formatNumber(sunHoursBySeason(y, key), 0)} hours</span></div>`;
+    return `<div class="year-sun-row"><span class="year-sun-label"><span class="year-sun-icon">${meta.icon}</span></span><span>${formatNumber(sunHoursBySeason(y, key), 0)} uur</span></div>`;
   }).join('');
-  return `<button class="year-sun" type="button" tabindex="0" aria-label="Sunshine hours: ${formatNumber(totalSunHours(y), 0)} hours in ${y}"><span class="year-sun-core"></span><span class="year-sun-tip">${rows}<div class="year-sun-total">Total ${formatNumber(totalSunHours(y), 0)} hours</div></span></button>`;
+  return `<button class="year-sun" type="button" tabindex="0" aria-label="Zonuren: ${formatNumber(totalSunHours(y), 0)} uur in ${y}"><span class="year-sun-core" style="scale:${sunSize}"></span><span class="year-sun-tip">${rows}<div class="year-sun-total">Totaal ${formatNumber(totalSunHours(y), 0)} uur</div></span></button>`;
 }
-
 
 function buildYearRankSymbol(rank, cx, cy, size) {
   if (rank <= 3) {

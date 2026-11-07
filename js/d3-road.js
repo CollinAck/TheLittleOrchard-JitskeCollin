@@ -42,11 +42,16 @@
       .enter()
       .append('g')
       .attr('class', year => `road-stop-hit ${year.active ? 'active' : 'ghost'}`)
+      .attr('transform', year =>
+        options.symbolScale > 1
+          ? `translate(${year.x},${centerY}) scale(${options.symbolScale}) translate(${-year.x},${-centerY})`
+          : null
+)
       .attr('data-year', year => year.year)
-      .attr('data-tip', year => `Harvest period ${options.periods[year.year] || 'unknown'}`)
+      .attr('data-tip', year => `Oogstperiode ${options.periods[year.year] || 'unknown'}`)
       .attr('tabindex', 0)
       .attr('role', 'button')
-      .attr('aria-label', year => `Go to ${year.year}, harvest period ${options.periods[year.year] || 'unknown'}`);
+      .attr('aria-label', year => `Ga naar ${year.year}, oogstperiode ${options.periods[year.year] || 'unknown'}`);
 
     buttons.append('rect')
       .attr('class', 'road-stop')
@@ -147,7 +152,8 @@
       rank: options.ranks,
       badge: options.badge,
       periods: options.periods,
-      compactRoad: true
+      compactRoad: true,
+      symbolScale: options.symbolScale || 1
     });
 
     years.forEach(year => {
@@ -160,10 +166,10 @@
     });
 
     const flag = `<g class="road-metric-hit road-flag-hit"
-                     data-tip="Business founded"
+                     data-tip="Bedrijf opgericht"
                      tabindex="0"
                      role="img"
-                     aria-label="Business founded"
+                     aria-label="Bedrijf opgericht"
                      transform="translate(${options.beginIconX - 26} ${options.y - 34}) scale(1.2)">
       <path d="M17 47V11" fill="none" stroke="#5b4630"
             stroke-width="3.2" stroke-linecap="round"/>
@@ -173,7 +179,29 @@
     </g>`;
 
     addExtraIcons(svg, flag);
-  }
+    if (options.symbolScale > 1) {
+      svg
+        .selectAll(
+          'g.road-metric-hit:not(.road-flag-hit)'
+        )
+        .each(function () {
+          const box = this.getBBox();
+
+          const cx = box.x + box.width / 2;
+          const cy = box.y + box.height / 2;
+
+          if (
+            !Number.isFinite(cx) ||
+            !Number.isFinite(cy)
+          ) return;
+
+        this.setAttribute(
+          'transform',
+          `translate(${cx},${cy}) scale(${options.symbolScale}) translate(${-cx},${-cy})`
+        );
+      });
+}
+}
 
   window.OrchardD3Road = { drawBook: drawBookPath };
 })();

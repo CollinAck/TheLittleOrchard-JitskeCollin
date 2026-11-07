@@ -1159,13 +1159,12 @@
 
   .money-coins-group {
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    align-items: end;
-    justify-items: center;
-    column-gap: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     height: 100%;
-    padding-top: 2px;
     width: 100%;
   }
 
@@ -1270,18 +1269,21 @@
     top: 50%;
     width: 62px;
     height: 62px;
+    min-width: 42px;
+    min-height: 42px;
     transform: translate(-50%,-50%);
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%,#fff8c6 0 16%,#f0d26c 42%,#d8b249 78%,#bc9431 100%);
     border: 2px solid rgba(122,89,60,.28);
     box-shadow: 0 0 0 8px rgba(244,226,147,.18);
+    transition: width 0.3s ease, height 0.3s ease;
   }
 
   .year-sun-tip {
     position: absolute;
     right: 0;
     top: calc(100% + 6px);
-    min-width: 132px;
+    min-width: 140px;
     padding: 8px 10px;
     border-radius: 12px;
     background: rgba(255,250,242,.98);
@@ -1290,6 +1292,7 @@
     display: none;
     text-align: left;
     z-index: 25;
+    transform: translateY(-120px);
   }
 
   .year-sun-tip span {
@@ -1347,6 +1350,33 @@
   }
 
   .year-sun:hover .year-sun-tip,.year-sun:focus .year-sun-tip {
+    display: block;
+  }
+
+  .year-weather {
+    position: relative;
+    width: 220px;
+    height: 144px;
+  }
+
+  .year-weather .year-sun {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .year-hail {
+    position: absolute;
+    right: 130px;
+    top: 38px;
+    width: 75px;
+    height: 70px;
+    z-index: 5;
+  }
+
+  .year-hail svg {
+    width: 100%;
+    height: 100%;
     display: block;
   }
 
@@ -1448,6 +1478,15 @@
   .best-varieties {
     display: grid;
     align-content: start;
+  }
+
+  .apple-ranking-title { 
+    font-family: Georgia,serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: solid black;
+    margin-bottom: 20px;
+    text-align: center;
   }
 
   .variety-rank-card {
@@ -3874,4 +3913,115 @@ main::after,
     }
   }
 
+  @layer overrides {
+    .top3-column .podium-profit {
+      display:block;
+      margin-top: 4px;
+      font-size: clamp(12px,1.5vw,18px);
+      font-weight: 800;
+      color: solid black;
+      text-align: center;
+      white-space: nowrap;
+    }
+  }
+  @layer overrides { 
+    .year-sun-tip span { 
+      display: block;
+      white-space: nowrap;
+      line-height: 1.6;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .year-sun-core { 
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+  }
+  @layer overrides { 
+    .hyear-inner > .stage-hail { 
+      display: block;
+      position: absolute;
+      left: auto;
+      right: 110px;
+      top: 40px;
+      width: 75px;
+      height: 65px;
+      transform: none;
+      z-index: 6;
+    }
+  }
+
+  @layer overrides {
+    .year-logo {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 400px;
+      max-width: 45%;
+      height: auto;
+      z-index: 25;
+    }
+  }
+
+  .d3-harvest-apple {
+    cursor: pointer;
+  }
+
+  .appel-tooltip {
+    position: fixed;
+    display: none;
+    min-width: 120px;
+    padding: 9px 11px;
+    border-radius: 12px;
+    background: rgba(255,250,242,.99);
+    border: 1px solid rgba(82,68,50,.16);
+    box-shadow: 0 12px 28px rgba(62,49,33,.16);
+    text-align: center;
+    z-index: 70;
+  }
+
+  .text-below-scale {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    z-index: 20; 
+    }
+
+    .costs-red {
+      color: red;
+    }
+
+    .nett-green {
+      color: green;
+    }
+
+    .text-above-scale {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      z-index: 20; 
+    }
+
+    .cart-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: black;
+      z-index: 20;
+      pointer-events: none;
+    }
 }

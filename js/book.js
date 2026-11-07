@@ -7,21 +7,36 @@
     const hn = h / maxH, pn = pr / maxP;
     const tilt = (pn - hn) * 10;
     const hail = HAIL_COUNTS[year] || 0;
+
+    let yearLogo = ''
+    if (String(year) === '2017') {
+      yearLogo = '<img class="year-logo" src="img/logo-the-little-orchard.png">'
+    }
+
     return `<article class="hyear-panel" data-year="${year}" aria-label="${year}">
+      ${yearLogo}
       <div class="hyear-inner">
         ${buildSunLabel(year)}
+        <div class="stage-hail show" tabindex="0" aria-label="${hail ? 'Hagel gevallen in' + year : 'Geen hagel gevallen in ' + year}">${buildHailDisplay(year)}</div>
         <div class="balance" data-target-tilt="${tilt.toFixed(2)}" data-left-y="${(-tilt * 1.7).toFixed(1)}" data-right-y="${(tilt * 1.7).toFixed(1)}">
           <div class="beam-wrap" style="transform:rotate(0deg)">
             <div class="pan left" style="transform:translateY(0px)">
               <div class="bowl"></div><div class="apple-bin">${buildApplesHTML(year)}</div>
               <button class="spray-single" type="button" tabindex="0" aria-label="Pesticide in ${year}">${buildSpraySummary(year)}</button>
-            </div>
-            <div class="stage-hail ${hail ? 'show' : ''}" tabindex="0" aria-label="Hail in ${year}">${buildHailDisplay(year)}</div>
+            </div>            
             <div class="pan right" style="transform:translateY(0px)">
+              <div class="text-above-scale">
+                <span class="costs-red">Kosten</span> en 
+                <span class="nett-green">winst</span> 
+              </div>
               <div class="bowl"></div><div class="money-bin">${buildMoneyCoins(year)}</div>
             </div>
           </div>
           <div class="stand-post"></div>
+          <p class="text-below-scale">De weeghschaal vergelijkt de oogst in tonnen met de winst in euro's.<br>
+          Meer geoogste appels betekent niet automatisch meer winst, <br>
+          omdat ook de kosten en verkoopprijzen invloed hebben.</p>
+          
         </div>
         ${buildFallingApplesHTML(year)}
         <div class="hyear-ops" aria-label="Cooling and sales ${year}">
@@ -61,8 +76,18 @@
     }
     return window.innerWidth <= 980 ? window.innerWidth : window.innerWidth * .50;
   }
+  function roadSymbolScale() {
+    return window.innerWidth > 980
+      ? Math.min(
+          2.2,
+          Math.max(1, window.innerWidth / 1500)
+        )
+      : 1;
+  }
   function yearOffset() {
-    return window.innerWidth <= 760 ? 72 : 112;
+    return window.innerWidth <= 760
+      ? 72
+      : 112 * roadSymbolScale();
   }
   function maximumScroll() {
     return Math.max(0, track.scrollWidth - viewport.clientWidth);
@@ -105,12 +130,36 @@
   function drawHorizontalSandPath() {
     const pw = pageWidth();
     const total = pw * YEARS.length;
-    const h = window.innerWidth <= 760 ? 174 : 194;
-    const y = window.innerWidth <= 760 ? 58 : 64;
+    const h = window.innerWidth <= 760
+      ? 174
+      : (
+        window.innerWidth > 980
+          ? Math.max(
+              160,
+              hroad.getBoundingClientRect().height || 194
+            )
+          : 194
+      );
+
+    const y = window.innerWidth <= 760
+      ? 58
+      : (
+        window.innerWidth > 980
+          ? Math.round(h * 0.45)
+          : 64
+      );
     const compact = window.innerWidth <= 760;
     const beginIconX = total - (compact ? 190 : 270);
     window.OrchardD3Road.drawBook(hroad, {
-      total: total, h, y, compact, beginIconX, pw, years: YEARS, activeYear: selectedYear,
+      total: total,
+      h,
+      y,
+      compact,
+      beginIconX,
+      pw,
+      years: YEARS,
+      activeYear: selectedYear,
+      symbolScale: roadSymbolScale(),
       yearOffset: yearOffset(), periods: HARVEST_PERIODS, ranks: YEAR_RANKING,
       badge: buildYearRankSymbol, extras: buildTimelineDetails
     });

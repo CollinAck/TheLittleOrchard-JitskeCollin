@@ -168,9 +168,35 @@
 
     wheels.append('circle')
       .attr('r', 3)
-      .attr('fill', '#544e46')
-      .attr('stroke', '#e5d6c3')
+      .attr('fill', 'gray')
+      .attr('stroke', 'white')
       .attr('stroke-width', 0.8);
+
+    let cartType = 'sold'
+    let cartColor = 'goldenrod'
+    if (kind == 'cool') {
+      cartType = 'cooling'
+      cartColor = 'lightblue'
+    }
+
+    const highestTonnes = d3.max(YEARS, year => Math.max(handlingTonnes(year, 'cooling'), handlingTonnes(year, 'sold')))
+    const cartSizeScale = d3.scaleLinear()
+      .domain([0, highestTonnes])
+      .range([0.7, 1.25])
+
+    const currentTonnes = handlingTonnes(element.dataset.year, cartType)
+    const cartSize = cartSizeScale(currentTonnes)
+
+    cart.attr('transform', 'translate(67 115) scale(' + cartSize + ') translate(-67 -115)')
+    cart.select('path')
+      .attr('fill', cartColor)
+      .attr('fill-opacity', 0.8)
+    cart.selectAll('.cart-board')
+      .attr('fill', cartColor)
+      .attr('fill-opacity', 0.6)
+    d3.select(element.parentElement)
+      .select('.crate-apple-wrap')
+      .remove()
   }
 
   function drawTruck(element) {
@@ -318,6 +344,20 @@
       .attr('fill', '#6b6d66');
 
     wheels.append('circle').attr('r', 2.5).attr('fill', '#777b76');
+
+    const year = element.dataset.year
+    const index = YEARS.indexOf(year)
+
+    if (index >= 0 && index < YEARS.length - 1) {
+      const prevYear = YEARS[index + 1]
+      const prevCosts = Number(freightCosts[prevYear]) || 0
+      const difference = currentfreightCosts - prevCosts
+      const direction = differenceDirection(difference)
+
+      vehicle.append('g')
+        .attr('class', 'truck-cost-trend')
+        .html(drawTimelineArrow(166, 35, 32, direction))
+    }
   }
 
   function drawDroplet(group, color) {
